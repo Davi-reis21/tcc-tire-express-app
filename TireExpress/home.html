@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tire Express - Home</title>
+
+  <!-- CSS do Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    #pedidoBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      font-size: 18px;
+      background-color: #0055A4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    #pedidoBtn:hover {
+      background-color: #003d7a;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <button id="pedidoBtn">Fazer Pedido</button>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    // Configuração do Firebase - substitua pelos seus dados do console Firebase
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_AUTH_DOMAIN.firebaseapp.com",
+      projectId: "SEU_PROJECT_ID",
+      storageBucket: "SEU_STORAGE_BUCKET.appspot.com",
+      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+      appId: "SEU_APP_ID"
+    };
+
+    // Inicializa Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Inicializa Firestore
+    const db = firebase.firestore();
+
+    let usuarioLat, usuarioLon;
+    let map;
+
+    function initMap(lat, lon) {
+      usuarioLat = lat;
+      usuarioLon = lon;
+
+      map = L.map('map').setView([lat, lon], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      L.marker([lat, lon]).addTo(map)
+        .bindPopup('Você está aqui!')
+        .openPopup();
+    }
+
+    function pegarLocalizacao() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            initMap(position.coords.latitude, position.coords.longitude);
+          },
+          error => {
+            alert('Erro ao obter localização: ' + error.message);
+          }
+        );
+      } else {
+        alert('Geolocalização não suportada pelo seu navegador.');
+      }
+    }
+
+    function enviarPedido(lat, lon) {
+      db.collection('pedidos').add({
+        latitude: lat,
+        longitude: lon,
+        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert('Pedido enviado com sucesso!');
+      })
+      .catch(error => {
+        alert('Erro ao enviar pedido: ' + error.message);
+      });
+    }
+
+    window.onload = () => {
+      pegarLocalizacao();
+
+      document.getElementById('pedidoBtn').addEventListener('click', () => {
+        if (usuarioLat && usuarioLon) {
+          enviarPedido(usuarioLat, usuarioLon);
+        } else {
+          alert('Localização não definida. Recarregue a página e tente novamente.');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

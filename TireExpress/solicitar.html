@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tire Express - Solicitar Serviço</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">TIREXPRESS</h1>
+    <p class="subtitle">Informe o(s) pneu(s) a serem atendidos:</p>
+
+    <textarea id="detalhes" placeholder="Ex: 2 pneus traseiros furados. Um deles precisa ser trocado."></textarea>
+
+    <button onclick="solicitarServico()">Continuar</button>
+
+    <footer>
+      <button onclick="location.href='home.html'">Voltar</button>
+    </footer>
+  </div>
+
+  <script>
+    function solicitarServico() {
+      const texto = document.getElementById('detalhes').value;
+      if (texto.trim()) {
+        sessionStorage.setItem('solicitacao', texto);
+        window.location.href = 'status.html';
+      } else {
+        alert('Por favor, informe os detalhes do problema.');
+      }
+    }
+  </script>
+</body>
+</html>

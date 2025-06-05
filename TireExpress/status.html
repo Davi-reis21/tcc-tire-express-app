@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tire Express - Status</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1 class="logo">TIREXPRESS</h1>
+    <p class="subtitle">Status da Solicitação</p>
+
+    <div class="status-box">
+      <p><strong>Descrição:</strong></p>
+      <p id="detalhes"></p>
+
+      <hr />
+
+      <p>📍 Buscando o borracheiro mais próximo...</p>
+      <p>🕒 Aguarde, ele está a caminho!</p>
+    </div>
+
+    <footer>
+      <button onclick="location.href='home.html'">Cancelar Serviço</button>
+    </footer>
+  </div>
+
+  <script>
+    const detalhes = sessionStorage.getItem('solicitacao');
+    document.getElementById('detalhes').innerText = detalhes || 'Nenhum detalhe informado.';
+  </script>
+</body>
+</html>
